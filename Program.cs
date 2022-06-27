@@ -62,6 +62,8 @@ builder.Services.AddCors(options =>
 		.WithOrigins("http://localhost:8080");
 	});
 });
+
+// NLog: Setup NLog for Dependency injection
 builder.Host.UseNLog();
 
 // Building application
