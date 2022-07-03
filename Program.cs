@@ -1,5 +1,5 @@
 // Initialization
-var builder = WebApplication.CreateBuilder()
+var builder = WebApplication.CreateBuilder();
 var authenticationSettings = new AuthenticationSettings();
 
 // Binding
