@@ -2,7 +2,7 @@
 {
     [Route("api/restaurant")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class RestaurantController : ControllerBase
     {
         private IRestaurantService _restaurantService;

@@ -34,7 +34,7 @@ builder.Services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>(
 builder.Services.AddScoped<IAuthorizationHandler, MinimumRestaurantsCreatedRequirementHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
 builder.Services.AddControllers().AddFluentValidation();
-builder.Services.AddDbContext<RestaurantDbContext>();
+builder.Services.AddDbContext<RestaurantDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("RestaurantsDbConnection")));
 builder.Services.AddScoped<RestaurantSeeder>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IAccountService, AccountService>();
@@ -55,22 +55,28 @@ builder.Services.AddScoped<RequestTimeMiddleware>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
-	options.AddPolicy("FrontEndClient", builder =>
+	options.AddPolicy("FrontEndClient", policyBuilder =>
 	{
-		builder.AllowAnyMethod()
+		policyBuilder.AllowAnyMethod()
 		.AllowAnyHeader()
-		.WithOrigins("http://localhost:8080");
+        .WithOrigins(builder.Configuration["AllowedOrigins"]);
 	});
 });
 builder.Host.UseNLog();
-
 // Building application
 var app = builder.Build();
 var scope = app.Services.CreateScope();
 var seeder = scope.ServiceProvider.GetRequiredService<RestaurantSeeder>();
 
 // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-app.UseCors(builder.Configuration["AllowedOrigins"]);
+app.UseResponseCaching();
+app.UseStaticFiles(new StaticFileOptions
+{
+	FileProvider = new PhysicalFileProvider(
+		   Path.Combine(builder.Environment.ContentRootPath, "wwwroot/Files/Public")),
+	RequestPath = "/wwwroot/Files/Public"
+});
+app.UseCors("FrontEndClient");
 seeder.SeedRolesAndRestaurants();
 if (app.Environment.IsDevelopment())
 {

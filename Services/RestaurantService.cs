@@ -119,7 +119,7 @@
 
             if (!authoriztionResult.Succeeded)
             {
-                throw new ForbidException($"Action is forbidden.");
+                throw new ForbidException($"Action is forbidden. You didn't create this restaurant.");
             }
             restaurant.Name = dto.Name;
             restaurant.Description = dto.Description;

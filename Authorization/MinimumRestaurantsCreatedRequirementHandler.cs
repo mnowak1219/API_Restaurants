@@ -10,19 +10,22 @@
         }
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, MinimumRestaurantsCreatedRequirement requirement)
         {
-            var userEmail = context.User.FindFirst(c => c.Type == ClaimTypes.Name).Value;
-            var userNumberOfCreatedRestaurants = int.Parse((context.User.FindFirst(c => c.Type == "NumberOfCreatedRestaurants")).Value);
-
-            _logger.LogInformation($"User {userEmail} with {userNumberOfCreatedRestaurants} created restaurants.");
-
-            if (userNumberOfCreatedRestaurants >= requirement.MinimumRestaurantsCreated)
+            if (context.User.Claims.ToList().Count != 0)
             {
-                _logger.LogInformation("Authorization succeded.");
-                context.Succeed(requirement);
-            }
-            else
-            {
-                _logger.LogInformation("Authorization failed.");
+                var userEmail = context.User.FindFirst(c => c.Type == ClaimTypes.Name).Value;
+                var userNumberOfCreatedRestaurants = int.Parse((context.User.FindFirst(c => c.Type == "NumberOfCreatedRestaurants")).Value);
+
+                _logger.LogInformation($"User {userEmail} with {userNumberOfCreatedRestaurants} created restaurants.");
+
+                if (userNumberOfCreatedRestaurants >= requirement.MinimumRestaurantsCreated)
+                {
+                    _logger.LogInformation("Authorization succeded.");
+                    context.Succeed(requirement);
+                }
+                else
+                {
+                    _logger.LogInformation("Authorization failed.");
+                }
             }
             return Task.CompletedTask;
         }

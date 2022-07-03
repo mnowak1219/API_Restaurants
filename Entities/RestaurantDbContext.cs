@@ -2,7 +2,10 @@
 {
     public class RestaurantDbContext : DbContext
     {
-        private string _connectionString = "Server=PDCWIN11;Database=RestaurantDb;Trusted_Connection=True;";
+        public RestaurantDbContext(DbContextOptions<RestaurantDbContext> options) :base(options)
+        {
+
+        }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Restaurant> Restaurants { get; set; }
@@ -42,16 +45,6 @@
                 .Property(a => a.Street)
                 .IsRequired()
                 .HasMaxLength(50);
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_connectionString);
-
-            optionsBuilder.UseSqlServer(_connectionString, builder =>
-            {
-                builder.EnableRetryOnFailure(2, TimeSpan.FromSeconds(3), null);
-            });
-            base.OnConfiguring(optionsBuilder);
         }
     }
 }

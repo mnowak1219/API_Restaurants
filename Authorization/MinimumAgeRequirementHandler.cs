@@ -10,19 +10,22 @@
         }
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, MinimumAgeRequirement requirement)
         {
-            var userEmail = context.User.FindFirst(c => c.Type == ClaimTypes.Name).Value;
-            var dateOfBirth = DateTime.Parse(context.User.FindFirst(c => c.Type == "DateOfBirth").Value);
-
-            _logger.LogInformation($"User {userEmail} with date of birth: [{dateOfBirth}] ");
-
-            if (dateOfBirth.AddYears(requirement.MinimumAge) <= DateTime.Today)
+            if (context.User.Claims.ToList().Count != 0)
             {
-                _logger.LogInformation("Authorization succeded.");
-                context.Succeed(requirement);
-            }
-            else
-            {
-                _logger.LogInformation("Authorization failed.");
+                var userEmail = context.User.FindFirst(c => c.Type == ClaimTypes.Name).Value;
+                var dateOfBirth = DateTime.Parse(context.User.FindFirst(c => c.Type == "DateOfBirth").Value);
+
+                _logger.LogInformation($"User {userEmail} with date of birth: [{dateOfBirth}] ");
+
+                if (dateOfBirth.AddYears(requirement.MinimumAge) <= DateTime.Today)
+                {
+                    _logger.LogInformation("Authorization succeded.");
+                    context.Succeed(requirement);
+                }
+                else
+                {
+                    _logger.LogInformation("Authorization failed.");
+                }
             }
             return Task.CompletedTask;
         }

@@ -8,7 +8,7 @@
                 .NotEmpty()
                 .MaximumLength(25);
 
-            RuleFor(f => f.Description)
+            RuleFor(f => f.HasDelivery.ToString())
                 .Matches("^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$");
         }
     }

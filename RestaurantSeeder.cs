@@ -10,6 +10,12 @@
     {
         if (_dbContext.Database.CanConnect())
         {
+            var pendingMigrations = _dbContext.Database.GetPendingMigrations();
+            if (pendingMigrations != null && pendingMigrations.Any())
+            {
+                _dbContext.Database.Migrate();
+            }
+
             if (!_dbContext.Roles.Any())
             {
                 _dbContext.Roles.AddRange(GetRoles());
@@ -121,7 +127,6 @@
 
         return addresses;
     }
-
     private IEnumerable<Restaurant> GetRestaurants()
     {
         Randomizer.Seed = new Random(0);
@@ -140,7 +145,6 @@
 
         return restaurants;
     }
-
     private IEnumerable<Dish> GetDishes()
     {
         Randomizer.Seed = new Random(0);
