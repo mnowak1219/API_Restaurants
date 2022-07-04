@@ -1,7 +1,7 @@
 name: CD
 on:
   push:
-    branches: [ master-pipeline ]
+    branches: [ master ]
 
 jobs:
   build:
