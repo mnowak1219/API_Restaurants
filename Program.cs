@@ -63,6 +63,7 @@ builder.Services.AddCors(options =>
 	});
 });
 builder.Host.UseNLog();
+
 // Building application
 var app = builder.Build();
 var scope = app.Services.CreateScope();
